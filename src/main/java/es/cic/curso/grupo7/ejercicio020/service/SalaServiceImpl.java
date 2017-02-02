@@ -1,14 +1,16 @@
 package es.cic.curso.grupo7.ejercicio020.service;
 
+import java.util.List;
+
+
 import javax.persistence.EntityManager;
+
 import javax.persistence.PersistenceContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import es.cic.curso.grupo7.ejercicio019.dominio.Notas;
-import es.cic.curso.grupo7.ejercicio019.dominio.NotesException;
-import es.cic.curso.grupo7.ejercicio019.repositorio.NotasRepository;
+import es.cic.curso.grupo7.ejercicio020.dto.Sala;
+import es.cic.curso.grupo7.ejercicio020.exception.MyException;
 import es.cic.curso.grupo7.ejercicio020.repository.SalaRepository;
 
 @Service
@@ -19,68 +21,60 @@ public class SalaServiceImpl implements SalaService {
 	
 	@PersistenceContext
 	private EntityManager entityManager;
-		
-	@Override
-	public void aniadirSesion(String texto, int idUsuario) {
-		insertarNota(DEFAULT, SINURL, texto, idUsuario);
-	}
 
-	@Override
-	public void insertarNota(boolean insertURL, String uRL, String texto, int idUsuario) {
-		Notas nota = new Notas(uRL, texto, insertURL, idUsuario);
-		notasRep.add(nota);
-	}
+	
 	
 	@Override
-	public void modificarTexto(String texto, int idUsuario, Long id) {
-		comprobarExistencia(id);
+	public void eliminarSala(Long id) {
+		Sala viejaSala = listarSalas(id);
+		salaRepo.delete(viejaSala);
 		
-		Notas notaExistente = notasRep.read(id);
-		notaExistente.setDatos(texto);
-		
-		notasRep.update(notaExistente);
 	}
 
 	@Override
-	public void modificarURL(boolean insertarURL, String uRL, int idUsuario, Long id) {
+	public Long aniadirSala(int numeroSala) {
+		Sala salas = new Sala();
+		salas.setNumeroSala(numeroSala);;
 		
-		comprobarExistencia(id);
+		Sala aniadido = aniadirSala(salas);
 		
-		if (insertarURL) {
-
-			Notas notaExistente = notasRep.read(id);
-			notaExistente.setuRL(uRL);
-
-			notaExistente.setInsertURL(true);
-			
-			notasRep.update(notaExistente);
-			
-		} else {
-			
-			Notas notaExistente = notasRep.read(id);
-			notaExistente.setuRL(SINURL);
-			notaExistente.setInsertURL(DEFAULT);
-			
-			notasRep.update(notaExistente);
-		}
+		return aniadido.getId();
 	}
 	
-	@Override
-	public void realizado(boolean hecho,int idUsuario, Long id) {
-		comprobarExistencia(id);
-		Notas notaExistente = notasRep.read(id);
-		if (hecho) {
-
-			notaExistente.setHecho(hecho);
-		} else {
-			throw new NotesException("La nota "+ id + " no ha sido realizada " + id);
-		}
+	private Sala aniadirSala(Sala nuevaSala) {
 		
+		salaRepo.add(nuevaSala);
+		entityManager.flush();
+		
+		return nuevaSala;
+	}
+
+	@Override
+	public void modificarSala(int numeroSala, int aforo, double recaudacion, Long id) {
+		comprobarExistencia(id);
+		
+		Sala salaExistente = salaRepo.read(id);
+		salaExistente.setNumeroSala(numeroSala);
+		
+		salaRepo.update(salaExistente);
+	}
+
+	@Override
+	public Sala listarSalas(Long id) {
+		return salaRepo.read(id);
+	}
+
+	@Override
+	public List<Sala> obtenerListaSalas() {
+		return salaRepo.list();
 	}
 	
 	private void comprobarExistencia(Long id) {
-		if (notasRep.read(id) == null) {
-			throw new NotesException("No existe la nota " + id);
+		if (salaRepo.read(id) == null) {
+			throw new MyException("No existe la nota " + id);
 		}
 	}
+	
+	
+		
 }

@@ -1,6 +1,7 @@
 package es.cic.curso.grupo7.ejercicio020.dto;
 
 import javax.persistence.Column;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,16 +11,23 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import es.cic.curso.grupo7.ejercicio019.dominio.Usuarios;
+import es.cic.curso.grupo7.ejercicio020.repository.Identificable;
+
 
 @Entity
 @Table(name="SESION")
-public class Sesion {
+public class Sesion implements Identificable<Long>  {
 	
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1971606077299347265L;
+
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	private Long id;
+	private Long idSesion;
 	
 	
 	@Column(name="aforoLibre")
@@ -28,14 +36,9 @@ public class Sesion {
 	@Column(name="aforoOcupado")
 	private int aforoOcupado;
 
-	
 	@Column(name="numeroSesion")
 	private int numeroSesion;
 	
-	@Column(name="numeroSala")
-	private int numeroSala;
-	
-
 	@Transient
 	private boolean cerrado;
 	
@@ -63,35 +66,45 @@ public class Sesion {
 		aforoOcupado += x;
 	}
 
-	public int getNumeroSesion() {
-		return numeroSesion;
-	}
-
-	public void setNumeroSesion(int numeroSesion) {
-		this.numeroSesion = numeroSesion;
-	}
-
 
 	public Long getId() {
-		return id;
+		return idSesion;
 	}
 
 	public void setId(Long id) {
-		this.id = id;
+		this.idSesion = id;
 	}
 
-	public int getNumeroSala() {
-		return numeroSala;
-	}
-
-	public void setNumeroSala(int numeroSala) {
-		this.numeroSala = numeroSala;
-	}
 	public boolean isCerrado() {
 		return cerrado;
 	}
 	public void setCerrado(boolean cerrado) {
 		this.cerrado = cerrado;
 	}
+	public Long getIdSesion() {
+		return idSesion;
+	}
+	public void setIdSesion(Long idSesion) {
+		this.idSesion = idSesion;
+	}
+	public Sala getSala() {
+		return sala;
+	}
+	public void setSala(Sala sala) {
+		this.sala = sala;
+	}
+	@Override
+	public String toString() {
+		return "Sesion [idSesion=" + idSesion + ", aforoLibre=" + aforoLibre + ", aforoOcupado=" + aforoOcupado
+				 + ", cerrado=" + cerrado + ", sala=" + sala + "]";
+	}
+	public int getNumeroSesion() {
+		return numeroSesion;
+	}
+	public void setNumeroSesion(int numeroSesion) {
+		this.numeroSesion = numeroSesion;
+	}
+	
+	
 	
 }
